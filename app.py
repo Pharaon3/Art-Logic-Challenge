@@ -1,23 +1,44 @@
+"""
+    Flask Application for String Encoding and Decoding
+    This application encodes and decodes strings using a custom encoding scheme.
+"""
 from flask import Flask, render_template, request
-from convert import encode_string, decode_encoded
+from convert import custom_encode, custom_decode
 
+# Initialize the Flask application
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-def encode_view():
-    stringToEncode = ""
-    encoded_dec = None
-    decoded_string = None
+def handle_encoding():
+   """
+   Handles the encoding and decoding of input strings.
+   
+   This function processes both GET and POST requests. For GET requests,
+   it renders the initial page. For POST requests, it retrieves the string
+   from the form, encodes it, and decodes it back for verification.
+   
+   Returns:
+      A rendered HTML page with the input string, encoded result, 
+      and decoded string if applicable.
+   """
+   input_string = ""  # Stores the input string from the user
+   encoded_result = None  # Encoded output as a list of integers
+   decoded_result = None  # Decoded string from the encoded result
 
-    if request.method == 'POST':
-        stringToEncode = request.form.get('stringToEncode', '')
-        encoded_dec = encode_string(stringToEncode)
-        decoded_string = decode_encoded(encoded_dec)
+   if request.method == 'POST':
+      input_string = request.form.get('inputString', '')  # Retrieve the input string
+      if input_string:  # Ensure the input is not empty
+         encoded_result = custom_encode(input_string)  # Perform encoding
+         decoded_result = custom_decode(encoded_result)  # Perform decoding for verification
 
-    return render_template('encode.html', 
-                           stringToEncode=stringToEncode, 
-                           encoded_dec=encoded_dec, 
-                           decoded_string=decoded_string)
+   # Render the template with the results
+   return render_template(
+      'encode.html',
+      input_string=input_string,
+      encoded_result=encoded_result,
+      decoded_result=decoded_result
+   )
 
+# Run the Flask application
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run(debug=True)
