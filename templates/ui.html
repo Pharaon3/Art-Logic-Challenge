@@ -13,66 +13,70 @@
             align-items: center;
             height: 100vh;
             font-family: 'Arial', sans-serif;
-            background-color: #e3f2fd;
+            background-color: #f5f7fa;
         }
         .container {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            max-width: 400px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 420px;
             width: 100%;
             text-align: center;
         }
         h1 {
-            color: #2c3e50;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
         form {
-            margin-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         label {
-            display: block;
             font-size: 1rem;
-            color: #34495e;
-            margin-bottom: 8px;
+            color: #444;
+            text-align: left;
         }
         input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 10px;
+            padding: 12px;
             font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #007BFF;
         }
         button {
-            width: 100%;
-            padding: 10px 15px;
+            padding: 12px 20px;
             font-size: 1rem;
             background-color: #007BFF;
-            color: #fff;
+            color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #0056b3;
         }
         .results {
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
             border-top: 1px solid #ccc;
             text-align: left;
         }
         .results h2 {
             color: #444;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 10px;
         }
         .results p {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #555;
             word-wrap: break-word;
         }
@@ -80,24 +84,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>Encode Your String</h1>
+        <h1>String Encoder</h1>
         <form method="post">
-            <label for="inputString">Input String</label>
+            <label for="inputString">Enter Your String</label>
             <input 
                 type="text" 
                 id="inputString" 
                 name="inputString" 
-                value="{{ input_string }}" 
-                placeholder="Enter a string to encode"
+                value="{{ input_text }}" 
+                placeholder="Type something here"
             >
-            <button type="submit">Encode</button>
+            <button type="submit">Submit</button>
         </form>
-        {% if encoded_result %}
+        {% if encoded_output %}
             <div class="results">
-                <h2>Encoded Data:</h2>
-                <p>{{ encoded_result }}</p>
+                <h2>Encoded Result:</h2>
+                <p>{{ encoded_output }}</p>
                 <h2>Decoded String:</h2>
-                <p>{{ decoded_result }}</p>
+                <p>{{ decoded_output }}</p>
             </div>
         {% endif %}
     </div>

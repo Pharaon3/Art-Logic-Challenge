@@ -1,92 +1,94 @@
 """
-Custom Encoding and Decoding Module
+Custom Text Transformation Module
 
-This module provides two functions: `custom_encode` and `custom_decode`. 
-The `custom_encode` function transforms an input string into a list of integers 
-using bitwise operations and packing of ASCII values. The `custom_decode` function 
-takes a list of encoded integers and reconstructs the original string.
+This module provides two key functions: `encode_text` and `decode_data`. 
+- `encode_text` converts an input string into a sequence of integers 
+  using bitwise manipulation and ASCII encoding.
+- `decode_data` reconstructs the original string from a list of encoded integers.
 
-Encoding Scheme:
-- The input string is processed in groups of four characters.
-- Each group of four characters is packed into a 32-bit integer using bitwise operations.
-- The resulting list of integers represents the encoded form of the original string.
+Encoding Strategy:
+- The input string is processed in blocks of four characters.
+- Each block of four characters is packed into a 32-bit integer using bitwise operations.
+- The result is a list of integers that represents the encoded form of the string.
 
-Decoding Scheme:
-- The encoded integers are unpacked into 32-bit chunks.
-- The original ASCII values are extracted from each chunk and reassembled into the decoded string.
+Decoding Strategy:
+- Each integer in the encoded list is unpacked to extract the 32-bit chunks.
+- The ASCII values for each character are derived from these chunks, and the original 
+string is rebuilt.
 
 Module Functions:
-- custom_encode(input_string): Encodes a string into a list of integers.
-- custom_decode(encoded_list): Decodes a list of integers back into the original string.
-
+- encode_text(input_string): Encodes the string into a list of integers.
+- decode_data(encoded_list): Decodes the list of integers back into the string.
 """
+
 def custom_encode(input_string):
    """
-   Encodes a given string into a list of integers using a custom scheme.
-   
-   This scheme processes the input string in groups of four characters, converting 
-   them into integers using bitwise operations to pack their ASCII values.
+   Encodes a string into a list of integers by packing groups of four characters.
 
-   @param input_string: The string to encode.
-   @return: A list of integers representing the encoded data.
+   This function breaks the string into 4-character chunks, converts each chunk 
+   to a 32-bit integer by bitwise packing of their ASCII values.
+
+   @param input_string: The text to be encoded.
+   @return: A list of integers representing the encoded version of the text.
    """
-   chunked_values = []  # Holds the packed integers for each group of four characters
-   current_chunk = 0  # The current chunk being constructed
-   shift_offset = 0  # Tracks the current bit position within a chunk
+   packed_chunks = []  # Stores the 32-bit chunks formed from 4 characters
+   chunk = 0  # The current chunk being processed
+   bit_position = 0  # The current bit position within the chunk
 
+   # Loop through each character in the input string
    for char in input_string:
-      current_chunk |= ord(char) << shift_offset  # Embed the ASCII value at the correct position
-      shift_offset += 8  # Move to the next byte position
-      if shift_offset == 32:  # When four characters (32 bits) are processed
-         chunked_values.append(current_chunk)  # Save the chunk
-         current_chunk = 0  # Reset for the next chunk
-         shift_offset = 0  # Reset the bit position
+      chunk |= ord(char) << bit_position  # Add the ASCII value to the current chunk
+      bit_position += 8  # Shift by 8 bits for the next character
+      if bit_position == 32:  # Once 4 characters (32 bits) are packed
+         packed_chunks.append(chunk)  # Store the packed chunk
+         chunk = 0  # Reset for the next chunk
+         bit_position = 0  # Reset the bit position for the next 32 bits
 
-   # Handle the remaining characters in the last incomplete chunk
-   if shift_offset > 0:
-      chunked_values.append(current_chunk)
+   # If there are leftover characters, store them as a smaller chunk
+   if bit_position > 0:
+      packed_chunks.append(chunk)
 
-   # Transform chunks into encoded integers using a custom mapping
-   encoded_result = []
-   for chunk in chunked_values:
-      encoded = 0  # Encoded version of the chunk
-      bit_counter = 0  # Tracks the bit mapping
+   # Convert packed chunks into a custom integer representation
+   encoded_output = []
+   for chunk in packed_chunks:
+      encoded_value = 0  # The transformed chunk
+      bit_index = 0  # Keeps track of the bit position in the encoded value
       while chunk > 0:
-         encoded |= (chunk & 1) << ((bit_counter % 8) * 4 + (bit_counter // 8))
+         encoded_value |= (chunk & 1) << ((bit_index % 8) * 4 + (bit_index // 8))
          chunk >>= 1
-         bit_counter += 1
-      encoded_result.append(encoded)
+         bit_index += 1
+      encoded_output.append(encoded_value)
 
-   return encoded_result
+   return encoded_output
 
 
 def custom_decode(encoded_list):
    """
-   Decodes a list of integers back into the original string using the custom scheme.
-   
-   This process reconstructs the original ASCII values from the encoded integers
-   and reassembles the string.
+   Decodes a list of integers back into the original string.
 
-   @param encoded_list: A list of integers representing the encoded data.
-   @return: The decoded string.
+   This function takes each encoded integer, unpacks it into 32-bit chunks, 
+   and retrieves the original ASCII values of the characters to reconstruct the string.
+
+   @param encoded_list: A list of encoded integers.
+   @return: The reconstructed original string.
    """
-   reconstructed_values = []  # Holds reconstructed 32-bit chunks
-   for encoded in encoded_list:
-      chunk = 0  # Temporary holder for the reconstructed chunk
-      bit_tracker = 0  # Tracks the bit mapping for decoding
-      while encoded > 0:
-         if encoded & 1:
-            chunk |= 1 << ((bit_tracker % 4) * 8 + (bit_tracker // 4))
-         encoded >>= 1
-         bit_tracker += 1
-      reconstructed_values.append(chunk)
+   decoded_chunks = []  # Holds the decoded 32-bit chunks
+   for encoded_value in encoded_list:
+      chunk = 0  # Temporary variable to reconstruct the chunk
+      bit_pos = 0  # Tracks the bit positions during decoding
+      while encoded_value > 0:
+         if encoded_value & 1:
+            chunk |= 1 << ((bit_pos % 4) * 8 + (bit_pos // 4))
+         encoded_value >>= 1
+         bit_pos += 1
+      decoded_chunks.append(chunk)
 
-   # Convert reconstructed values back into characters
-   decoded_string = ""
-   for chunk in reconstructed_values:
-      for i in range(4):  # Extract up to 4 characters from each 32-bit chunk
-         char_code = (chunk >> (i * 8)) & 0xFF
-         if char_code != 0:  # Ignore padding zeros
-            decoded_string += chr(char_code)
+   # Convert the decoded chunks back into characters
+   original_text = ""
+   for chunk in decoded_chunks:
+      for i in range(4):  # Extract up to 4 characters from each chunk
+         char_ascii = (chunk >> (i * 8)) & 0xFF
+         if char_ascii != 0:  # Skip padding zeros
+            original_text += chr(char_ascii)
 
-   return decoded_string
+   return original_text

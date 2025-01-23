@@ -1,29 +1,40 @@
 """
-String Encoding and Decoding Script
+String Transformation Utility
 
-This script allows the user to encode and decode a string using a custom encoding scheme.
+This program provides functionality to transform text between its original form and
+a custom numerical representation.
 
-The encoding process converts a string into a list of integers by packing the ASCII values
-of characters into 32-bit chunks. The decoding process reverses this, reconstructing the
-original string from the list of encoded integers.
+It offers two main operations:
+1. Encoding: Translates text into a sequence of integers based on character ASCII values.
+2. Decoding: Reconstructs the original text from the numerical sequence.
 
 Functions:
-- custom_encode(input_string): Encodes the input string into a list of integers.
-- custom_decode(encoded_list): Decodes the list of integers back into the original string.
+- encode_string(text): Converts text into a series of integers.
+- decode_sequence(numbers): Converts a sequence of integers back into text.
 
-The user is prompted to input a string, which is then encoded and decoded, with both results
-displayed.
-
+The script takes user input, applies the transformations, and displays the results.
 """
+
 from convert import custom_encode, custom_decode
 
-# Prompt the user for input
-input_string = input("Enter a string to encode: ")
+def main():
+   """
+   Main function to execute the encoding and decoding process.
 
-# Encode the string
-encoded_result = custom_encode(input_string)
-print("Encoded Result:", encoded_result)
+   This function collects user input, encodes the input text into a sequence of 
+   integers using a custom encoding scheme, and then decodes it back to verify 
+   the transformation. The encoded data and reconstructed text are displayed to the user.
+   """
+   # Collect user input
+   user_text = input("Input text for transformation: ")
 
-# Decode the encoded result
-decoded_string = custom_decode(encoded_result)
-print("Decoded String:", decoded_string)
+   # Perform encoding
+   encoded_data = custom_encode(user_text)
+   print("Encoded Output:", encoded_data)
+
+   # Perform decoding
+   reconstructed_text = custom_decode(encoded_data)
+   print("Reconstructed Text:", reconstructed_text)
+
+if __name__ == "__main__":
+   main()
