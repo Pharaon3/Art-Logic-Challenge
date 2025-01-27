@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>String Encoding Tool</title>
     <style>
+        /* General Styles */
         body {
             margin: 0;
             padding: 0;
@@ -15,6 +16,7 @@
             font-family: 'Arial', sans-serif;
             background-color: #f5f7fa;
         }
+
         .container {
             background-color: #ffffff;
             border-radius: 12px;
@@ -24,22 +26,27 @@
             width: 100%;
             text-align: center;
         }
-        h1 {
+
+        /* Title */
+        .text-title {
             color: #333;
-            font-size: 2rem;
             margin-bottom: 20px;
         }
+
+        /* Form Styles */
         form {
             margin-top: 20px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
+
         label {
             font-size: 1rem;
             color: #444;
             text-align: left;
         }
+
         input[type="text"] {
             padding: 12px;
             font-size: 1rem;
@@ -48,9 +55,17 @@
             outline: none;
             transition: border-color 0.3s;
         }
+
+        .text-error {
+            font-size: 1rem;
+            color: #b30009;
+            text-align: left;
+        }
+
         input[type="text"]:focus {
             border-color: #007BFF;
         }
+
         button {
             padding: 12px 20px;
             font-size: 1rem;
@@ -61,20 +76,25 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
+        /* Results Section */
         .results {
             margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid #ccc;
             text-align: left;
         }
+
         .results h2 {
             color: #444;
             font-size: 1.3rem;
             margin-bottom: 10px;
         }
+
         .results p {
             font-size: 1rem;
             color: #555;
@@ -84,7 +104,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>String Encoder</h1>
+        <!-- Title -->
+        <h1 class="text-title">String Encoder</h1>
+
+        <!-- Form Section -->
         <form method="post">
             <label for="inputString">Enter Your String</label>
             <input 
@@ -94,8 +117,13 @@
                 value="{{ input_text }}" 
                 placeholder="Type something here"
             >
+            {% if error_text %}
+                <div class="text-error">{{ error_text }}</div>
+            {% endif %}
             <button type="submit">Submit</button>
         </form>
+
+        <!-- Results Section -->
         {% if encoded_output %}
             <div class="results">
                 <h2>Encoded Result:</h2>
