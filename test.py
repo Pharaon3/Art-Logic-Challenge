@@ -5,56 +5,75 @@ Validates the correctness of encoding, decoding, and ASCII compatibility.
 """
 
 import unittest
-from convert import custom_decode, custom_encode, check_ascii
+from base import decode_custom, encode_custom, is_ascii_only
 
 
-class TransformationTests(unittest.TestCase):
+class TestTransformations(unittest.TestCase):
    """
    Test suite for text transformation functions, including encoding and decoding.
    """
 
-   def test_ascii_validation(self):
+   def test_ascii_compliance(self):
       """
-      Verify ASCII compatibility checks.
+      Ensure proper ASCII compatibility checks.
       """
-      self.assertTrue(check_ascii("Hello"), "Failed for ASCII-only string.")
-      self.assertTrue(check_ascii("12345"), "Failed for numeric ASCII.")
-      self.assertTrue(check_ascii("~!@#$%^&*()"), "Failed for ASCII symbols.")
+      self.assertTrue(is_ascii_only("Hello World"), "Failed for ASCII string.")
+      self.assertTrue(is_ascii_only("12345"), "Failed for digits.")
+      self.assertTrue(is_ascii_only("!@#$%^&*()"), "Failed for symbols.")
 
       # negative test: should not allow Unicode.
-      self.assertFalse(check_ascii("Hello 🌍"), "Failed for string with emoji.")
-      self.assertFalse(check_ascii("Résumé"), "Failed for accented character.")
-      self.assertFalse(check_ascii("ASCII ✓, Unicode ✪"), "Failed for mixed content.")
+      self.assertFalse(is_ascii_only("Goodbye 🌍"), "Failed for emoji string.")
+      self.assertFalse(is_ascii_only("Café"), "Failed for accented characters.")
+      self.assertFalse(
+         is_ascii_only("ASCII ✔, Unicode ✪"), "Failed for mixed content."
+      )
 
-   def test_reversible_transformations(self):
+   def test_encoding_decoding_round_trip(self):
       """
-      Ensure encoding and decoding operations are reversible.
+      Ensure that encoding and decoding are reversible without data loss.
       """
-      cases = [
+      sample_texts = [
          "",
-         "x",
-         "word",
-         "phrase example",
-         "Let's test this string thoroughly!",
-         "Complexity increases with longer examples.",
+         "y",
+         "apple",
+         "encoded phrase",
+         "This is a more complicated test string!",
+         "The longer the input, the more complex the result.",
       ]
-      for text in cases:
+      for text in sample_texts:
          with self.subTest(text=text):
             self.assertEqual(
-               custom_decode(custom_encode(text)),
+               decode_custom(encode_custom(text)),
                text,
-               f"Reversible test failed for: {text}",
+               f"Round-trip failure for text: {text}",
             )
 
-   def test_encoding_format(self):
+   def test_encoded_output(self):
       """
-      Check if encoding outputs match expected results.
+      Ensure the encoding produces the expected results.
       """
-      inputs = ["A", "FRED", " :^)", "egad, a base tone denotes a bad age"]
-      expected = [
-         [16777217],
-         [251792692],
-         [79094888],
+      data = [
+         "tacocat",
+         "never odd or even",
+         "lager, sir, is regal",
+         "go hang a salami, I'm a lasagna hog",
+         "egad, a base tone denotes a bad age",
+      ]
+      expected_encoding = [
+         [267487694, 125043731],
+         [267657050, 233917524, 234374596, 250875466, 17830160],
+         [267394382, 167322264, 66212897, 200937635, 267422503],
+         [
+            200319795,
+            133178981,
+            234094669,
+            267441422,
+            78666124,
+            99619077,
+            267653454,
+            133178165,
+            124794470,
+         ],
          [
             267389735,
             82841860,
@@ -67,20 +86,31 @@ class TransformationTests(unittest.TestCase):
             124782119,
          ],
       ]
-      for idx, val in enumerate(inputs):
-         with self.subTest(val=val):
+      for idx, item in enumerate(data):
+         with self.subTest(item=item):
             self.assertEqual(
-               custom_encode(val), expected[idx], "Encoding mismatch."
+               encode_custom(item), expected_encoding[idx], "Encoding mismatch."
             )
 
-   def test_decoding_consistency(self):
+   def test_decoded_output(self):
       """
-      Validate decoding restores encoded inputs to original.
+      Ensure that decoding correctly restores the original data.
       """
-      encoded_cases = [
-         [16777217],
-         [251792692],
-         [79094888],
+      encoded_samples = [
+         [267487694, 125043731],
+         [267657050, 233917524, 234374596, 250875466, 17830160],
+         [267394382, 167322264, 66212897, 200937635, 267422503],
+         [
+            200319795,
+            133178981,
+            234094669,
+            267441422,
+            78666124,
+            99619077,
+            267653454,
+            133178165,
+            124794470,
+         ],
          [
             267389735,
             82841860,
@@ -93,36 +123,44 @@ class TransformationTests(unittest.TestCase):
             124782119,
          ],
       ]
-      expected_results = ["A", "FRED", " :^)", "egad, a base tone denotes a bad age"]
-      for idx, code in enumerate(encoded_cases):
-         with self.subTest(code=code):
+      expected_decoding = [
+         "tacocat",
+         "never odd or even",
+         "lager, sir, is regal",
+         "go hang a salami, I'm a lasagna hog",
+         "egad, a base tone denotes a bad age",
+      ]
+      for idx, encoded_data in enumerate(encoded_samples):
+         with self.subTest(encoded_data=encoded_data):
             self.assertEqual(
-               custom_decode(code), expected_results[idx], "Decoding mismatch."
+               decode_custom(encoded_data),
+               expected_decoding[idx],
+               "Decoding mismatch.",
             )
 
-   def test_corner_cases(self):
+   def test_edge_cases(self):
       """
-      Address edge scenarios like empty inputs and special symbols.
+      Handle special cases such as empty input or special symbols.
       """
 
-      # should return empty array when encode empty string
-      self.assertEqual(custom_encode(""), [], "Empty string encoding failed.")
-      self.assertEqual(custom_decode([]), "", "Empty list decoding failed.")
+      # Should return empty result for encoding an empty string.
+      self.assertEqual(encode_custom(""), [], "Empty string encoding failed.")
+      self.assertEqual(decode_custom([]), "", "Empty list decoding failed.")
 
-      # should allow special characters.
-      special = "!@#$%^&*()"
+      # Test with special symbols.
+      special_chars = "!@#$%^&*()_+"
       self.assertEqual(
-         custom_decode(custom_encode(special)),
-         special,
+         decode_custom(encode_custom(special_chars)),
+         special_chars,
          "Special characters test failed.",
       )
 
-      # @dev negative test: should not allow encode unicode.
-      unicode_sample = "🚀✨"
+      # Negative case: should not encode unicode characters.
+      unicode_example = "🌟💫"
       self.assertNotEqual(
-         custom_decode(custom_encode(unicode_sample)),
-         unicode_sample,
-         "Unicode character handling failed.",
+         decode_custom(encode_custom(unicode_example)),
+         unicode_example,
+         "Unicode handling test failed.",
       )
 
 

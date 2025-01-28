@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom String Encoder</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Verdana', sans-serif;
+            background-color: #f1f8ff;
+        }
+        .box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h1 {
+            color: #34495e;
+            font-size: 1.9rem;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 1.1rem;
+            color: #d9534f;
+            text-align: left;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .output {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: left;
+        }
+        .output h2 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        .output p {
+            font-size: 1rem;
+            color: #555;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>String Encoder/Decoder</h1>
+        <form method="post">
+            <label for="inputString">Enter String</label>
+            <input 
+                type="text" 
+                id="inputString" 
+                name="inputString" 
+                value="{{ original_text }}" 
+                placeholder="Input string to encode"
+            >
+            {% if error_message %}
+                <div class="error-message">{{ error_message }}</div>
+            {% endif %}
+            <button type="submit">Transform</button>
+        </form>
+        {% if encoded_output %}
+            <div class="output">
+                <h2>Encoded Result:</h2>
+                <p>{{ encoded_output }}</p>
+                <h2>Decoded Result:</h2>
+                <p>{{ decoded_output }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

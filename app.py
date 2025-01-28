@@ -1,48 +1,49 @@
 """
-    Flask Application for String Encoding and Decoding
-    This application encodes and decodes strings using a custom encoding scheme.
+   Flask Web Application for Custom String Transformation
+   This app encodes and decodes strings using a custom transformation scheme.
 """
-from flask import Flask, render_template, request
-from convert import custom_encode, custom_decode, check_ascii
 
-# Initialize the Flask application
+from flask import Flask, render_template, request
+from base import encode_custom, decode_custom, is_ascii_only
+
+# Initialize Flask app instance
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-def handle_encoding():
+def transform_string():
    """
-   Handles the encoding and decoding of input strings.
-   
-   This function processes both GET and POST requests. For GET requests,
-   it renders the initial page. For POST requests, it retrieves the string
-   from the form, encodes it, and decodes it back for verification.
-   
+   Manages the transformation (encoding and decoding) of input strings.
+
+   Handles both GET and POST requests:
+     - GET: Renders the main page.
+     - POST: Retrieves the input string, encodes it, and decodes it for validation.
+
    Returns:
-      A rendered HTML page with the input string, encoded result, 
-      and decoded string if applicable.
+      A rendered HTML page displaying the input, encoded result, 
+      and decoded string (if successful).
    """
-   input_string = ""  # Stores the input string from the user
-   encoded_result = None  # Encoded output as a list of integers
-   decoded_result = None  # Decoded string from the encoded result
-   err_txt = None # Error text
+   original_text = ""  # Stores user-provided string
+   encoded_output = None  # Encoded representation of the string
+   decoded_output = None  # Reconstructed original string after decoding
+   error_message = None  # Holds error message if the input is invalid
 
    if request.method == 'POST':
-      input_string = request.form.get('inputString', '')  # Retrieve the input string
-      if check_ascii(input_string):  # Ensure the input is not empty
-         encoded_result = custom_encode(input_string)  # Perform encoding
-         decoded_result = custom_decode(encoded_result)  # Perform decoding for verification
+      original_text = request.form.get('inputString', '')  # Fetch user input
+      if is_ascii_only(original_text):  # Validate ASCII-only characters
+         encoded_output = encode_custom(original_text)  # Perform encoding
+         decoded_output = decode_custom(encoded_output)  # Decode to verify correctness
       else:
-         err_txt = "It is not ASCII-compatible."
+         error_message = "The input is not compatible with ASCII encoding."
 
-   # Render the template with the results
+   # Render the HTML page with results
    return render_template(
-      'encode.html',
-      input_string=input_string,
-      encoded_result=encoded_result,
-      decoded_result=decoded_result,
-      err_txt=err_txt
+      'template.html',
+      original_text=original_text,
+      encoded_output=encoded_output,
+      decoded_output=decoded_output,
+      error_message=error_message
    )
 
-# Run the Flask application
+# Launch the Flask application
 if __name__ == '__main__':
    app.run(debug=True)

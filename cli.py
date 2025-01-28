@@ -15,7 +15,7 @@ Functions:
 This tool interacts with the user to demonstrate transformations.
 """
 
-from convert import custom_encode, custom_decode, check_ascii
+from base import custom_encode, custom_decode, check_ascii
 
 def execute():
    """
