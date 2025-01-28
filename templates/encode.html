@@ -46,6 +46,11 @@
             border-radius: 4px;
             margin-bottom: 15px;
         }
+        .error-text {
+            font-size: 1rem;
+            color: #b30009;
+            text-align: left;
+        }
         button {
             width: 100%;
             padding: 10px 15px;
@@ -90,6 +95,9 @@
                 value="{{ input_string }}" 
                 placeholder="Enter a string to encode"
             >
+            {% if err_txt %}
+                <div class="error-text">{{ err_txt }}</div>
+            {% endif %}
             <button type="submit">Encode</button>
         </form>
         {% if encoded_result %}

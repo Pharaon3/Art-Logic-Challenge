@@ -3,7 +3,7 @@
     This application encodes and decodes strings using a custom encoding scheme.
 """
 from flask import Flask, render_template, request
-from convert import custom_encode, custom_decode
+from convert import custom_encode, custom_decode, check_ascii
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -24,19 +24,23 @@ def handle_encoding():
    input_string = ""  # Stores the input string from the user
    encoded_result = None  # Encoded output as a list of integers
    decoded_result = None  # Decoded string from the encoded result
+   err_txt = None # Error text
 
    if request.method == 'POST':
       input_string = request.form.get('inputString', '')  # Retrieve the input string
-      if input_string:  # Ensure the input is not empty
+      if check_ascii(input_string):  # Ensure the input is not empty
          encoded_result = custom_encode(input_string)  # Perform encoding
          decoded_result = custom_decode(encoded_result)  # Perform decoding for verification
+      else:
+         err_txt = "It is not ASCII-compatible."
 
    # Render the template with the results
    return render_template(
       'encode.html',
       input_string=input_string,
       encoded_result=encoded_result,
-      decoded_result=decoded_result
+      decoded_result=decoded_result,
+      err_txt=err_txt
    )
 
 # Run the Flask application

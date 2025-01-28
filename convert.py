@@ -20,6 +20,21 @@ Module Functions:
 - custom_decode(encoded_list): Decodes a list of integers back into the original string.
 
 """
+
+def check_ascii(s):
+   """
+   Determine if all elements in the given text are within the ASCII scope.
+
+   @param: s (str): Text to evaluate.
+   @return: bool: True if every character belongs to the ASCII range; otherwise False.
+   @example:
+      >>> check_ascii("Sample")
+      True
+      >>> check_ascii("Sample 🌟")
+      False
+   """
+   return not any(ord(c) >= 128 for c in s)
+
 def custom_encode(input_string):
    """
    Encodes a given string into a list of integers using a custom scheme.
@@ -58,7 +73,6 @@ def custom_encode(input_string):
       encoded_result.append(encoded)
 
    return encoded_result
-
 
 def custom_decode(encoded_list):
    """

@@ -45,4 +45,11 @@ Follow these steps to set up the project:
 ### Command-Line Interface (CLI)
 To test the encoding and decoding functionality via the command line:
 ```bash
-python test.py
+python cli.py
+```
+
+### Testing
+To run the unit test:
+```bash
+python -m unittest test.py
+```
