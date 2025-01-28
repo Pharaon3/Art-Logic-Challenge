@@ -1,43 +1,42 @@
 """
 Text Transformation Tool
 
-This script enables text conversion between its plain form and a custom
-numerical representation.
+This script provides a utility for converting text to a custom numerical representation and back.
 
 Features:
-1. Text to numbers (encoding).
-2. Numbers to text (decoding).
+1. Encode text into a list of integers.
+2. Decode integers back into the original text.
 
 Functions:
-- encode_text(txt): Converts plain text to integers.
-- decode_numbers(nums): Reconstructs plain text from integers.
+- encode_custom(text): Converts plain text to its numerical form.
+- decode_custom(numbers): Reconstructs text from its numerical form.
 
-This tool interacts with the user to demonstrate transformations.
+This script includes interactive functionality for demonstration purposes.
 """
 
-from base import custom_encode, custom_decode, check_ascii
+from base import encode_custom, decode_custom, is_ascii_only
 
-def execute():
+def main():
    """
-   Core function to handle the transformation process.
+   Main function to execute the text transformation workflow.
 
-   Gathers user input, verifies ASCII compatibility, encodes text to integers,
-   and decodes back to the original. Results are displayed for review.
+   - Takes user input for text conversion.
+   - Checks for ASCII compatibility.
+   - Encodes text to integers and decodes it back for validation.
    """
-   # Input from user
-   txt = input("Enter text for conversion: ")
+   user_input = input("Enter text to transform: ")
 
-   if not check_ascii(txt):
-      print("Input is not ASCII-compatible.")
+   if not is_ascii_only(user_input):
+      print("Error: Input contains non-ASCII characters.")
       return
 
-   # Encoding phase
-   nums = custom_encode(txt)
-   print("Encoded Data:", nums)
+   # Perform encoding
+   encoded_numbers = encode_custom(user_input)
+   print("Encoded Representation:", encoded_numbers)
 
-   # Decoding phase
-   restored = custom_decode(nums)
-   print("Decoded Text:", restored)
+   # Perform decoding
+   decoded_text = decode_custom(encoded_numbers)
+   print("Decoded Text:", decoded_text)
 
 if __name__ == "__main__":
-   execute()
+   main()
